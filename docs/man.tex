@@ -1,0 +1,146 @@
+\documentclass[english]{article}
+
+\usepackage[latin1]{inputenc}
+\usepackage{latex2man}
+\usepackage{babel}
+\usepackage{verbatim}
+
+\setDate{12/20/05}
+\setVersion{0.2.3}
+
+\begin{document}
+
+% \begin{Name}{chapter}{name}{author}{info}{title}
+\begin{Name}{1}{namedrop}{Jack Louis}{Network Tools}{namedrop command documentation}
+%%%%%%%%%%
+
+\Prog{namedrop} Version \Version\ is a (possibly, if compiled with c-ares) asynchronous DNS information enumeration
+tool.
+
+\end{Name}
+
+\section{Synopsis}
+%%%%%%%%%%
+
+\Prog{namedrop}
+   \oOpt{-4}
+   \oOpt{-6}
+\oOptArg{-a}{ number}
+\oOptArg{-b}{ number-number}
+\oOptArg{-c}{ characters}
+   \oOpt{-d}
+   \oOpt{-D}
+   \oOpt{-e}
+\oOptArg{-f}{ filename}
+   \oOpt{-F}
+   \oOpt{-h}
+\oOptArg{-H}{ hostname}
+   \oOpt{-r}
+   \oOpt{-s}
+   \oOpt{-S}
+   \oOpt{-v}
+   \oOpt{-V}
+    \Arg{ target list}
+
+\section{Description}
+%%%%%%%%%%
+
+\Prog{namedrop}:
+	There are three basic modes of operation, dictionary brute force mode, general brute force mode and
+reverse IP sweep mode. Dictionary brute force mode may use a (possibly compressed) file specified at the
+command line, containing a hostnames separated by newlines.
+
+\section{Options}
+%%%%%%%%%%
+\begin{Description}
+\item[\Opt{-4}]
+Imply that all questions are for IPV4, possibly requiring half the amount of questions
+to be asked if IPV6 questions were also enabled.
+\item[\Opt{-6}]
+Does exactly the same thing as \Opt{-4} but it enables IPV6 not IPV4. This option can
+also possibly serve to disambiguate the meaning of a hostname, that otherwise could return an IPV4
+and a IPV6 record, in such a case the best guess is generally to use the IPV4 address record.
+\item[\OptArg{-a}{ number}]
+Concurrency for asynchronous resolver (how many questions to leave pending in parallel). This option
+requires c-ares support to be enabled. Some experimentation is generally required to get this value at
+a optimal setting, as it depends on the DNS cache(s) that are available.
+\item[\OptArg{-b}{ number-number}]
+Brute force mode, with mandatory argument in the form of \OptArg{-b}{ 3} or \OptArg{-b}{ 3-4} to brute force
+hostnames from 1 (implied) to 3 characters, and from 3 to 4 characters, respectively.
+\item[\OptArg{-c}{ characters}]
+If inside of brute force mode, a list of characters that will be used to create hostnames from, such as
+\OptArg{-c}{ abcdefghjiklmnopqrstuvwxyz-}. This option will also effect the random `wildcard' host
+(if not specifically specified otherwise with \Opt{-H}) that is asked for to detect a default forward
+record.
+\item[\Opt{-d}]
+Not yet implemented.
+\item[\Opt{-D}]
+Dictionary Brute force Mode (default).
+\item[\Opt{-e}]
+Display an exact output of data as returned by name server (only generally useful in a forward lookup mode).
+If this option is selected CNAME records will be displayed so it is obvious what actual question generated
+the A record output.
+\item[\OptArg{-f}{ filename}]
+Filename that will be used inside of a Dictionary mode brute force, the search order used to locate the file
+is 1) locate a file in the current directory 2) append on .gz to the filename and locate it within the current
+directory 2) prepend SHAREDIR (possibly /usr/local/share/namedrop or /usr/share/namedrop) onto the filename
+3) append .gz to SHAREDIR/filename. Stated simply \OptArg{-f}{ foo} will become, ./foo, ./foo.gz,
+/usr/share/namedrop/foo, and finally /usr/share/namedrop/foo.gz.
+\item[\Opt{-F}]
+Do not attempt to remove duplicate output, possibly display the same results over and over.
+\item[\Opt{-h}]
+Display command line program help.
+\item[\OptArg{-H}{ hostname}]
+Explicit hostname to be used during wildcard hostname detection.
+\item[\Opt{-r}]
+Reverse DNS sweeping mode (gather hostnames from a cidr address range), use \Opt{-4} or \Opt{-6} to specify
+exactly what you want, otherwise the programs interpretation can be seemingly random.
+\item[\Opt{-s}]
+Output will be SQL, all data output will be in the form of SQL insert statements, and all non-data output
+will be preceded with an SQL comment (--) so that a pipe may be used to interface to a command line SQL
+monitor program like \Cmd{psql}{1}.
+\item[\Opt{-S}]
+Force synchronous DNS behavior, only useful if c-ares support is compiled in, as asynchronous questions
+are default in that case.
+\item[\Opt{-v}]
+For each \Opt{-v} increase verbosity of program, useful when trying to locate a problem.
+\item[\Opt{-V}]
+Display program version.
+\end{Description}
+
+\section{Examples}
+%%%%%%%%%%
+\begin{Description}
+\textbf{namedrop -ve4 domain.tld }
+Dictionary Brute force the domain `domain.tld' for hostnames within asking for IPV4 records only.
+If CNAMES are discovered \emph{-e} then display them with the actual A record returned. Also
+display a small amount of information about things the program is doing.
+\end{Description}
+
+\section{Files}
+%%%%%%%%%%
+\begin{Description}
+\item[\File{namedrop.conf}] The file containing the default configuration options for usage.
+\end{Description}
+
+\section{See Also}
+%%%%%%%%%%
+\Cmd{host}{1} \Cmd{dig}{1}
+
+\section{Reporting Bugs}
+%%%%%%%%%%
+\begin{description}
+Report Bugs to osace-users@lists.sourceforge.net
+\end{description}
+
+\section{Copyright}
+%%%%%%%%%%
+\begin{description}
+\copyright\ 2005 Jack Louis \Email{jack@dyadsecurity.com}
+This is free software; see the source for  copying  conditions.  There is NO warranty; not even for
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+\end{description}
+
+\LatexManEnd
+
+\end{document}

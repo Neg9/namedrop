@@ -1,0 +1,16 @@
+#!/bin/sh
+
+if [ ! -f $1 ]
+then
+	echo no file called $1
+	exit 1
+fi
+
+if (echo $1 | grep '\.gz$' >/dev/null)
+then
+	zcat ${1} | dd conv=lcase 2>/dev/null | sort | uniq > ${1%%.gz}
+	rm ${1} && gzip -9 ${1%%.gz}
+else
+	echo need file name that ends with .gz
+	exit 1
+fi

@@ -1,0 +1,60 @@
+#!/bin/sh -x
+
+if [ ! -f readconf.c ]
+then
+	echo error, run this script from the source root
+	exit
+fi
+
+umask 0022
+chown -R root:root .
+
+ARCH=i486
+CPUTUNE=i686
+
+if [ -f /etc/slackware-version ]
+then
+	DISTVERS=`cat /etc/slackware-version | awk '{print $2}'`
+else
+	DISTVERS="slackware-unknown"
+fi
+
+strip="strip --remove-comment -d"
+
+dist=slackware
+
+# a safe location
+PKGBDIR=`pwd`/stage
+
+export dist strip PKGBDIR ARCH CPUTUNE DISTVERS
+
+mkdir -p packages/${dist}/${DISTVERS}
+
+rm -rf $PKGBDIR && mkdir -m 755 $PKGBDIR 2>/dev/null
+
+./scripts/_auto.sh
+
+CFLAGS="-march=${ARCH} -mcpu=${CPUTUNE} -O2" ./configure --prefix=/usr --mandir=/usr/man --sysconfdir=/etc --localstatedir=/var ${ARCH}-${dist}-linux
+make clean && make
+
+VERSION=`grep "VERSION" config.h | awk '{print $3}' | sed 's/"//g'`
+
+DESTDIR=$PKGBDIR make install
+
+find $PKGBDIR/usr/man -name "*.[1-9]" -exec gzip -9 {} \;
+
+(cd $PKGBDIR
+chgrp bin usr/bin
+cd usr/bin && $strip * && rm -f gmon.out && chown root:bin *
+)
+
+(cd $PKGBDIR
+mkdir install && cat <<EOF > install/slack-desc
+namedrop: namedrop
+namedrop:
+namedrop: namedrop is an enhanced dns info enumerator
+namedrop:
+namedrop:
+EOF
+makepkg -l y -c n ../packages/${dist}/${DISTVERS}/namedrop-${VERSION}-${ARCH}-1.tgz
+)

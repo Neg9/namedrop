@@ -1,0 +1,42 @@
+# user configurable options below
+
+# if you dont have c-ares then change CARES to 0, no async requests will not be available
+HAVE_C_ARES=@HAVE_C_ARES@
+
+USE_MAKE=@USE_MAKE@
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+
+# end of user configurable options
+
+# other options you may need to change below.
+
+# this should be gcc for gnu type platforms, or cc if that doesnt work generally
+CC=@CC@
+
+CCINCS=-I. -I/usr/local/include
+CCDEFS=@DEFS@ -DHAVE_C_ARES=@HAVE_C_ARES@ -DBIGENDIAN=@BIGENDIAN@
+CCOPTS=@CFLAGS@
+CCWARNS=-Wall -Wshadow -Wcast-align -Wcast-qual -Wchar-subscripts -Wno-deprecated-declarations -Wformat-security -Wimplicit -Wsign-compare -Wuninitialized -Wunused -Wwrite-strings -Wmissing-format-attribute -Wmissing-noreturn -Wmissing-braces -Wparentheses -Wsequence-point -Wno-format-y2k -DSTRICT  #-Werror
+CCWARNS=-Wall
+
+LDFLAGS=-L/usr/local/lib
+LIBS=-lz @LIBS@ @EXTRA_LIBS@
+
+INSTALL=install -o root
+MKDIR=mkdir -p -m 755
+
+LN=@LN_S@
+
+MANSUF=1
+DESTDIR ?=
+
+PROGNAME=@PACKAGE_NAME@
+
+SYSCONFDIR=@sysconfdir@/$(PROGNAME)
+SHAREDIR=@datadir@/$(PROGNAME)
+BINDIR=@bindir@
+MAN1DIR=@mandir@/man1
+
+CFLAGS += $(CCWARNS) $(CCINCS) $(CCDEFS) $(CCOPTS) -DSYSCONFDIR=\"$(SYSCONFDIR)\" -DSHAREDIR=\"$(SHAREDIR)\" -DPROGNAME=\"$(PROGNAME)\"

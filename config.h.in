@@ -1,0 +1,121 @@
+#ifndef _CONFIG_H
+# define _CONFIG_H
+
+#define DEF_BRUTECHARS	"abcdefghijklmnopqrstuvwxyz0123456789-"
+#define LEGAL_LEN	37
+#define MAX_BRUTELEN	16
+#define SQL_COMMENT	"--"
+#define DEF_CONFFILE	SYSCONFDIR "/" PROGNAME ".conf"
+
+#define PACKAGE_VERSION	@PACKAGE_VERSION@
+
+#define MAX_SHN_LEN	24
+#define MIN_SHN_LEN	16
+
+#define XDEBUG_SIGNAL	SIGUSR2
+
+#define NBUF_LEN	4096
+
+#define MYADNS_TIMEOUT	8 /* seconds */
+
+#define DEF_CONCURRENCY	16
+
+#define ASYNC_SLEEPTIME	10000
+
+#define MAX_TARGETS	256
+
+#define IPV6		1
+
+/* autoconf cruft follows */
+
+#undef HAVE_ARPA_INET_H
+#undef HAVE_GETHOSTBYNAME
+#undef HAVE_GETHOSTBYNAME2
+#undef HAVE_INTTYPES_H
+#undef HAVE_LIMITS_H
+#undef HAVE_MALLOC
+#undef HAVE_MEMORY_H
+#undef HAVE_MEMSET
+#undef HAVE_NETDB_H
+#undef HAVE_NETINET_IN_H
+#undef HAVE_REALLOC
+#undef HAVE_SELECT
+#undef HAVE_STDINT_H
+#undef HAVE_STDLIB_H
+#undef HAVE_STRCASECMP
+#undef HAVE_STRDUP
+#undef HAVE_STRERROR
+#undef HAVE_STRINGS_H
+#undef HAVE_STRING_H
+#undef HAVE_SYS_SELECT_H
+#undef HAVE_SYS_SOCKET_H
+#undef HAVE_SYS_STAT_H
+#undef HAVE_SYS_TYPES_H
+#undef HAVE_UNISTD_H
+#undef STDC_HEADERS
+#undef TIME_WITH_SYS_TIME
+#undef HAVE_STRUCT_SOCKADDR_LEN
+#undef BIGENDIAN
+
+#include <stdio.h>
+#ifdef HAVE_STDLIB_H
+# include <stdlib.h>
+#endif
+#if defined(HAVE_INTTYPES_H)
+# include <inttypes.h>
+#elif defined(HAVE_STDINT_H)
+# include <stdint.h>
+#else
+/* this is the part where i make things up */
+#define uint8_t unsigned char
+#define int8_t signed char
+#define uint16_t unsigned short int
+#define int16_t signed short int
+#define uint32_t unsigned int
+#define int32_t signed int
+#define uint64_t unsigned long long int
+#define int64_t signed long long int
+#endif /* std ints */
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
+#ifdef HAVE_STRING_H
+# include <string.h>
+#endif
+#ifdef HAVE_STRINGS_H
+# include <strings.h>
+#endif
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netinet/ip6.h>
+#include <netdb.h>
+#ifdef HAVE_ARPA_INET_H
+# include <arpa/inet.h>
+#endif
+#include <ctype.h>
+#include <errno.h>
+#include <signal.h>
+#ifdef HAVE_LIMITS_H
+# include <limits.h>
+#endif
+#include <netdb.h>
+#ifdef TIME_WITH_SYS_TIME
+# include <sys/time.h>
+# include <time.h>
+#else
+# include <time.h>
+#endif
+
+#ifdef HAVE_STRUCT_SOCKADDR_LEN
+struct f_s {
+	uint8_t len;
+	uint8_t family;
+};
+#else
+struct f_s {
+	uint16_t family;
+};
+#endif
+
+#endif /* CONFIG_H */

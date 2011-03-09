@@ -1,0 +1,163 @@
+'\" t
+.\" Manual page created with latex2man on Tue Dec 20 21:43:20 PST 2005
+.\" NOTE: This file is generated, DO NOT EDIT.
+.de Vb
+.ft CW
+.nf
+..
+.de Ve
+.ft R
+
+.fi
+..
+.TH "NAMEDROP" "1" "12/20/05" "Network Tools " "Network Tools "
+.SH NAME
+
+.PP
+namedrop
+Version 0.2.3 is a (possibly, if compiled with c\-ares) asynchronous DNS information enumeration 
+tool. 
+.PP
+.SH SYNOPSIS
+
+.PP
+namedrop
+[\fB\-4\fP]
+[\fB\-6\fP]
+[\fB\-a\fP\fI number\fP]
+[\fB\-b\fP\fI number\-number\fP]
+[\fB\-c\fP\fI characters\fP]
+[\fB\-d\fP]
+[\fB\-D\fP]
+[\fB\-e\fP]
+[\fB\-f\fP\fI filename\fP]
+[\fB\-F\fP]
+[\fB\-h\fP]
+[\fB\-H\fP\fI hostname\fP]
+[\fB\-r\fP]
+[\fB\-s\fP]
+[\fB\-S\fP]
+[\fB\-v\fP]
+[\fB\-V\fP]
+\fItarget list\fP
+.PP
+.SH DESCRIPTION
+
+.PP
+namedrop:
+There are three basic modes of operation, dictionary brute force mode, general brute force mode and 
+reverse IP sweep mode. Dictionary brute force mode may use a (possibly compressed) file specified at the 
+command line, containing a hostnames separated by newlines. 
+.PP
+.SH OPTIONS
+
+.TP
+\fB\-4\fP
+ Imply that all questions are for IPV4, possibly requiring half the amount of questions 
+to be asked if IPV6 questions were also enabled. 
+.TP
+\fB\-6\fP
+ Does exactly the same thing as \fB\-4\fP
+but it enables IPV6 not IPV4. This option can 
+also possibly serve to disambiguate the meaning of a hostname, that otherwise could return an IPV4 
+and a IPV6 record, in such a case the best guess is generally to use the IPV4 address record. 
+.TP
+\fB\-a\fP\fI number\fP
+ Concurrency for asynchronous resolver (how many questions to leave pending in parallel). This option 
+requires c\-ares support to be enabled. Some experimentation is generally required to get this value at 
+a optimal setting, as it depends on the DNS cache(s) that are available. 
+.TP
+\fB\-b\fP\fI number\-number\fP
+ Brute force mode, with mandatory argument in the form of \fB\-b\fP\fI 3\fP
+or \fB\-b\fP\fI 3\-4\fP
+to brute force 
+hostnames from 1 (implied) to 3 characters, and from 3 to 4 characters, respectively. 
+.TP
+\fB\-c\fP\fI characters\fP
+ If inside of brute force mode, a list of characters that will be used to create hostnames from, such as 
+\fB\-c\fP\fI abcdefghjiklmnopqrstuvwxyz\-\fP\&.
+This option will also effect the random `wildcard\&' host 
+(if not specifically specified otherwise with \fB\-H\fP)
+that is asked for to detect a default forward 
+record. 
+.TP
+\fB\-d\fP
+ Not yet implemented. 
+.TP
+\fB\-D\fP
+ Dictionary Brute force Mode (default). 
+.TP
+\fB\-e\fP
+ Display an exact output of data as returned by name server (only generally useful in a forward lookup mode). 
+If this option is selected CNAME records will be displayed so it is obvious what actual question generated 
+the A record output. 
+.TP
+\fB\-f\fP\fI filename\fP
+ Filename that will be used inside of a Dictionary mode brute force, the search order used to locate the file 
+is 1) locate a file in the current directory 2) append on \&.gz to the filename and locate it within the current 
+directory 2) prepend SHAREDIR (possibly /usr/local/share/namedrop or /usr/share/namedrop) onto the filename 
+3) append \&.gz to SHAREDIR/filename. Stated simply \fB\-f\fP\fI foo\fP
+will become, \&./foo, \&./foo.gz, 
+/usr/share/namedrop/foo, and finally /usr/share/namedrop/foo.gz. 
+.TP
+\fB\-F\fP
+ Do not attempt to remove duplicate output, possibly display the same results over and over. 
+.TP
+\fB\-h\fP
+ Display command line program help. 
+.TP
+\fB\-H\fP\fI hostname\fP
+ Explicit hostname to be used during wildcard hostname detection. 
+.TP
+\fB\-r\fP
+ Reverse DNS sweeping mode (gather hostnames from a cidr address range), use \fB\-4\fP
+or \fB\-6\fP
+to specify 
+exactly what you want, otherwise the programs interpretation can be seemingly random. 
+.TP
+\fB\-s\fP
+ Output will be SQL, all data output will be in the form of SQL insert statements, and all non\-data output 
+will be preceded with an SQL comment (\-\-) so that a pipe may be used to interface to a command line SQL 
+monitor program like \fIpsql\fP(1)\&.
+.TP
+\fB\-S\fP
+ Force synchronous DNS behavior, only useful if c\-ares support is compiled in, as asynchronous questions 
+are default in that case. 
+.TP
+\fB\-v\fP
+ For each \fB\-v\fP
+increase verbosity of program, useful when trying to locate a problem. 
+.TP
+\fB\-V\fP
+ Display program version. 
+.PP
+.SH EXAMPLES
+
+\fBnamedrop \-ve4 domain.tld \fP
+Dictionary Brute force the domain `domain.tld\&' for hostnames within asking for IPV4 records only. 
+If CNAMES are discovered \fI\-e\fP
+then display them with the actual A record returned. Also 
+display a small amount of information about things the program is doing. 
+.PP
+.SH FILES
+
+.TP
+namedrop.conf
+ The file containing the default configuration options for usage. 
+.PP
+.SH SEE ALSO
+
+\fIhost\fP(1)
+\fIdig\fP(1)
+.PP
+.SH REPORTING BUGS
+
+Report Bugs to osace\-users@lists.sourceforge.net 
+.PP
+.SH COPYRIGHT
+
+(C)2005 Jack Louis \fBjack@dyadsecurity.com\fP
+This is free software; see the source for copying conditions. There is NO warranty; not even for 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+.PP
+.\" NOTE: This file is generated, DO NOT EDIT.

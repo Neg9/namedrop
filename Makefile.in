@@ -1,0 +1,95 @@
+include Makefile.inc
+
+.c.o:
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+all: $(PROGNAME) default.conf docsd
+
+wrap: myadns
+
+SRCS=getopts.c readconf.c ext/cidr.c ext/fread.c ext/xmalloc.c ext/hash.c @EXTRA_SRCS@ ext/standard_dns.c main.c misc.c ext/chtbl.c
+
+HDRS=$(SRCS:.c=.h) settings.h
+OBJS=$(SRCS:.c=.o)
+
+$(OBJS): $(HDRS) Makefile
+
+WORDLISTS=dict_words.gz dos.gz etc-hosts.gz fast.gz jargon.gz mit.edu.gz movie-characters.gz names.gz oz.gz 
+DEFWL=fast.gz
+
+docsd:
+	$(USE_MAKE) -C docs
+
+$(PROGNAME): $(HDRS) Makefile $(OBJS)
+	echo $(OBJS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $(PROGNAME) $(OBJS) $(LIBS)
+
+default.conf: default.conf.in
+	cat default.conf.in | sed -e 's,@SHAREDIR@,'"$(SHAREDIR)"',g' -e 's,@PROGNAME@,'"$(PROGNAME)"',g' -e 's,@SYSCONFDIR@,'"$(SYSCONFDIR)"',g' > default.conf
+
+install: all
+	mkdir -p $(DESTDIR)/$(BINDIR)
+	$(INSTALL) -m755 $(PROGNAME) $(DESTDIR)/$(BINDIR)
+	mkdir -p $(DESTDIR)/$(MAN1DIR)
+	$(INSTALL) -m644 docs/man.1 $(DESTDIR)/$(MAN1DIR)/$(PROGNAME).$(MANSUF)
+	$(MKDIR) $(DESTDIR)/$(SYSCONFDIR)
+	if test -f $(DESTDIR)/$(SYSCONFDIR)/$(PROGNAME).conf; then \
+		$(INSTALL) -m644 default.conf $(DESTDIR)/$(SYSCONFDIR)/$(PROGNAME).conf.new; \
+	else\
+		$(INSTALL) -m644 default.conf $(DESTDIR)/$(SYSCONFDIR)/$(PROGNAME).conf;\
+	fi
+	$(MKDIR) $(DESTDIR)/$(SHAREDIR)
+	( cd wordlists && \
+		for g in $(WORDLISTS); do \
+			$(INSTALL) -m644 $$g $(DESTDIR)/$(SHAREDIR)/; \
+		done \
+	)
+	( cd $(DESTDIR)/$(SHAREDIR) && rm -f default.gz && $(LN) $(DEFWL) default.gz )
+
+myadns: myadns.c ext/xmalloc.o misc.o
+	$(CC) $(CFLAGS) -D_WRAP_ -c myadns.c
+	$(CC) $(CFLAGS) -o myadns ext/xmalloc.o myadns.o misc.o $(LIBS)
+	rm -f myadns.o
+
+ext/hash: ext/hash.c
+	$(CC) $(CFLAGS) -D_WRAP_ -o ext/hash ext/hash.c
+
+debug: clean
+	(cd ext && rm xmalloc.[ch] && ln -s _xdebug.c xmalloc.c && ln -s _xdebug.h xmalloc.h )
+
+nodebug: clean
+	(cd ext && rm xmalloc.[ch] && ln -s _xmalloc.c xmalloc.c && ln -s _xmalloc.h xmalloc.h )
+	
+uninstall:
+	-rm -f $(BINDIR)/$(PROGNAME)
+	-if test -d $(MAN1DIR); then \
+		rm -f $(MAN1DIR)/$(PROGNAME).$(MANSUF); \
+	fi
+	-if test -d $(SHAREDIR); then \
+		( cd $(SHAREDIR) && rm -f $(WORDLISTS) ); \
+		rmdir $(SHAREDIR); \
+	fi
+	-if test -d $(SYSCONFDIR); then \
+		rm -f $(SYSCONFDIR)/$(PROGNAME).conf; \
+		rmdir $(SYSCONFDIR); \
+	fi
+
+tags:
+	cscope -Rqb
+
+clean:
+	rm -rf core $(OBJS) $(PROGNAME) cscope.* gmon.out myadns ext/hash default.conf
+	$(USE_MAKE) -C docs clean
+
+slack:
+	./scripts/mkslackpkg
+
+check: all
+	./scripts/runtests.sh
+
+distclean: clean
+	rm -rf configure Makefile.inc config.log config.status autom4te.cache config.h packages stage
+	$(USE_MAKE) -C docs distclean
+
+dist: distclean
+	./scripts/mkdist.sh

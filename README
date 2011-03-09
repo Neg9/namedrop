@@ -1,0 +1,54 @@
+Building/Configuring/Whatever:
+
+SEE OS_STATUS FOR INFORMATION ABOUT YOUR SPECIFIC SYSTEM AND THIS SOFTWARE
+
+a) get and install c-ares ( http://daniel.haxx.se/projects/c-ares/ ) if at all possible
+b) run ./configure --with-your-arguments
+  1) you may need to run configure like:
+     LDFLAGS="-L/usr/local/lib" CFLAGS="-I/usr/local/include" ./configure
+     if you are running certain os'es that dont search /usr/local by default and have
+     installed c-ares into /usr/local
+c) type make
+d) type make install
+e) goto http://www.dyadsecurity.com/s_softwarefeedback.html and please fill it in so we
+can make better software in the future.
+
+DESTDIR is supported for making packages, make uninstall also works to remove the software
+from your system. please note that the default config file is preserved, so if you make install
+twice, you will not overwrite your already present configuration file, if you uninstall this
+software you will need to manually remove the configuration file(s) (sysconfdir)/(progname)/(progname).conf.new
+
+basic usage:
+
+### wordlist based A (forward) record brute force:
+
+namedrop -ve domain.tld
+
+### wordlist (possibly $PREFIX/share/namedrop/oz or $PREFIX/share/namedrop/os.gz) based A record brute force:
+namedrop -ve -f oz domain.tld
+
+### wordlist specifically with /usr/share/dict/words based A record brute force:
+namedrop -ve -f /usr/share/dict/words domain.tld
+
+### to enable SQL output (for the same as above):
+(the schema you want is located inside sql/ )
+
+namedrop -ves domain.tld
+
+the direction flag in the SQL output means:
+	0: Reverse Lookup
+	1: Forward Lookup
+
+### to Brute force hostnames from 2 to 4 characters: (db.domain.tld -> www2.domain.tld)
+
+namedrop -ve -b2-4 domain.tld
+
+### reverse dns based sweep of a cidr range:
+
+namedrop -v -r www.google.com/24
+
+### reverse dns scanning a ipv6 range:
+
+namedrop -v -6r 6bone.net/114
+
+see man page for further usage

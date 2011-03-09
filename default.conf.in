@@ -1,0 +1,78 @@
+# configuration file for @PROGNAME@, (@SYSCONFDIR@/@PROGNAME@.conf)
+# default values are in the commented out example setting. command line options
+# will override the values in this file.
+
+#
+# There are 3 modes of operation, dict (dictionary host guessing), brute force mode, and reverse mode.
+#
+#mode:		dict
+
+#
+# By default, ipv4 and ipv6 look ups are attempted, if you know there are no ipv6 records, or don't care,
+# uncomment this following like, possible values are ipv4, ipv6 (only ipv6) and ipv46 for both
+#
+#addrfam:	ipv46
+
+# during brute force mode, allowed determines what characters are used during hostname creation, and also
+# the wildcard host name (the sillyhostname) { if not specified } is created randomly from this character
+# list as well.
+#
+#allowed:	abcdefghijklmnopqrstuvwxyz0123456789-._
+
+#
+# async (if supported during compile time) has 2 types of settings, no for forcing sync dns look ups
+# or a number controlling how many dns look ups are queued at any given time, too large a value may
+# cause the scanner to malfunction, ymmv
+#
+#async:	16
+
+#
+# dictfile is the dictionary (a file containing words on separate lines) that will be asked for,
+# the default is @SHAREDIR@/default, generally a symlink to another file. you may
+# specify a fully qualified path or simply a file name, and the following search will be used
+# 1) look for a file called `foo'
+# 2) look for a compressed (gzip) file called `foo.gz'
+# 3) look in @SHAREDIR@ for a file called `foo'
+# 4) look in @SHAREDIR@ for a file called `foo.gz'
+#
+#dictfile:	default
+
+#
+# sillyhostname (if specified) will be the hostname that we look for to determine if the dns server
+# will send back a reply for anything we ask for, if found the address records for this `wildcard'
+# will be ignored, IE; if we ask for ldfkgjfkdfjgkldfg.foo.bar and later we ask for mail.foo.bar
+# and they have the same address, then we will assume that the host mail.foo.bar does not exist
+# if not specified, the sillyhostname will be randomly created from the `allowed' characters
+#
+# NOTE: there is no default sillyhostname, it is randomly generated, if you specify it, it will no
+# longer be random.
+#
+#sillyhostname:	foobar393849384_sdfkjdsf
+
+#
+# verbose is a numeric argument containing the level of verbosity that you want to see from the scan,
+# if it is set high, a lot of output will be available, sometimes useful for troubleshooting (if you
+# find a bug, try setting this high, and see if it clears up the reason)
+#
+#verbose:	0
+
+#
+# exact means that you want to know exactly what names matched the query, IE; if you got an answer
+# back for www.foo.bar, and the record indicates that it is an alias for web.foo.bar, then exact mode
+# will say that www.foo.bar is a CNAME and that there is an A record for web.foo.bar. otherwise
+# it would have just told you that www.foo.bar had address x.x.x.x
+#
+#exact:		1
+
+#
+# discover mode means that when a record is found, then more information will be attempted from this
+# information. for example if we find printer.foo.bar then in discover mode, we will ask about the HINFO
+# record for printer.foo.bar
+#
+#discover:	1
+
+#
+# filter is a numeric argument that specifies if duplicate record detection is used, IE if we get back
+# 2 records for www.foo.bar with the same address, then if filtered we will only display one.
+#
+#filter:	1

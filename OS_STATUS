@@ -1,0 +1,9 @@
+Linux/Slackware 10.2/ia32	X
+Linux/Slackware 10.2/x86_64	X
+FreeBSD 6.0-RELEASE/ia32	X (Slow in sync mode)
+NetBSD 2.1 (GENERIC)/ia32	X
+OSX/Darwin 7.9.0/ppc		X
+
+
+X - Full Pass
+x - Build OK/Most checks passed

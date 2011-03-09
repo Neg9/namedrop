@@ -1,0 +1,19 @@
+0.0.5
+
+0.1.0
+	add glibc adns (getaddrinfo_a) support
+
+0.2.0
+	change glibc adns to gnu-adns to c-ares async dns
+
+0.2.1
+	tidy up all features to a semi-working state
+	make uninstall safer
+	clean up makefile for destdir support, etc.
+
+0.2.2
+	autoconfify, attempt to guess about portability in some limited sense
+	attempt to make discovery mode work
+
+0.2.3
+	document and pack for release
