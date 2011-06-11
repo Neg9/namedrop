@@ -42,9 +42,9 @@ static struct dnsq_s {
 	unsigned int concurrency;
 } dnsq;
 
-static void myadns_fwd_cb(void *, int, struct hostent *);
-static void myadns_rev_cb(void *, int, struct hostent *);
-static void myadns_any_cb(void *, int, uint8_t *, int  );
+static void myadns_fwd_cb(void *, int, int, struct hostent *);
+static void myadns_rev_cb(void *, int, int, struct hostent *);
+static void myadns_any_cb(void *, int, int, uint8_t *, int  );
 
 int myadns_init(void (*cb)(int , const void *, const void *), unsigned int concurrency) {
 	int ret=0;
@@ -408,7 +408,7 @@ void myadns_track_pending(int type, const void *p) {
  * private functions
  */
 
-static void myadns_rev_cb(void *p, int status, struct hostent *he) {
+static void myadns_rev_cb(void *p, int status, int timeouts, struct hostent *he) {
 	union {
 		void *p;
 		unsigned int *cbp;
@@ -495,7 +495,7 @@ static void myadns_rev_cb(void *p, int status, struct hostent *he) {
 	return;
 }
 
-static void myadns_any_cb(void *p, int status, uint8_t *pkt, int pkt_len) {
+static void myadns_any_cb(void *p, int status, int timeouts, uint8_t *pkt, int pkt_len) {
 	union {	
 		void *p;
 		unsigned int *cbp;
@@ -624,7 +624,7 @@ static void myadns_any_cb(void *p, int status, uint8_t *pkt, int pkt_len) {
 	pause();
 }
 
-static void myadns_fwd_cb(void *p, int status, struct hostent *he) {
+static void myadns_fwd_cb(void *p, int status, int timeouts, struct hostent *he) {
 	union {
 		void *p;
 		unsigned int *cbp;
